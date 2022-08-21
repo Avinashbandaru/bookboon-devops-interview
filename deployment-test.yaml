@@ -6,7 +6,7 @@ metadata:
   name: cerebro-gui-test
 spec:
   progressDeadlineSeconds: 600
-  replicas: 0
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -24,34 +24,27 @@ spec:
       containers:
       - args:
         - -Dconfig.file=/etc/cerebro/application.conf
-        image: lmenezes/cerebro:0.9,4
-        imagePullPolicy: Never
+        image: lmenezes/cerebro:0.9.4
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
           httpGet:
             path: /
             port: http
             scheme: HTTP
-          initialDelaySeconds: 120
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
+          initialDelaySeconds: 150
         name: cerebro
         ports:
         - containerPort: 9000
           name: http
           protocol: TCP
         readinessProbe:
-          failureThreshold: 3
+          failureThreshold: 150
           httpGet:
             path: /
             port: http
-            scheme: HTTP
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        resources: {}
+          initialDelaySeconds: 300
+        # resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
@@ -65,11 +58,11 @@ spec:
           name: tmp
         resources:
           limits:
-            cpu: "1"
-            memory: 2Gi
+            cpu: 400m
+            memory: 400Mi
           requests:
-            cpu: "1"
-            memory: 20000Gi
+            cpu: 100m
+            memory: 100Mi
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
@@ -81,6 +74,8 @@ spec:
       volumes:
       - emptyDir: {}
         name: db
+      - emptyDir: {}
+        name: cerebro-gui
       - configMap:
           defaultMode: 420
           name: cerebro-gui

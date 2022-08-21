@@ -6,14 +6,23 @@ spec:
   selector:
     matchLabels:
       app: nginx
-  replicas: 2
+  replicas: 1 # changed to 2 to 1 for my testing 
   template:
     metadata:
       labels:
         app: nginx
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.16.1
-        ports:
-        - containerPort: 80
+       - name: nginx
+         image: nginx:1.16.1
+         ports:
+         - containerPort: 80
+         volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              type: Directory
+      volumes:
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+
+       
